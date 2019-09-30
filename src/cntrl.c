@@ -36,7 +36,7 @@
 #include "status.h"
 #include "sysfs.h"
 #include "utils.h"
-#include "amd_sgpio.h"
+#include "amd.h"
 
 /**
  * @brief Name of controllers types.

@@ -44,7 +44,7 @@
 #include "sysfs.h"
 #include "utils.h"
 #include "vmdssd.h"
-#include "amd_sgpio.h"
+#include "amd.h"
 
 /* Global timestamp value. It shell be used to update a timestamp field of block
    device structure. See block.h for details. */
