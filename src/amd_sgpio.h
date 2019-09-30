@@ -19,6 +19,6 @@
 
 #include "block.h"
 
-int amd_sgpio_em_enabled(const char *path);
-int amd_sgpio_write(struct block_device *device, enum ibpi_pattern ibpi);
-char *amd_sgpio_get_path(const char *cntrl_path);
+int amd_em_enabled(const char *path);
+int amd_write(struct block_device *device, enum ibpi_pattern ibpi);
+char *amd_get_path(const char *cntrl_path);

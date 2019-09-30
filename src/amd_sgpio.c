@@ -42,6 +42,12 @@
 #include "utils.h"
 #include "amd_sgpio.h"
 
+enum amd_led_interfaces {AMD_UNSET,
+			 AMD_SGPIO,
+			 AMD_IPMI};
+
+static enum amd_led_interfaces amd_interface = AMD_UNSET;
+
 #define REG_FMT_2	"%23s: %-4x%23s: %-4x\n"
 #define REG_FMT_1	"%23s: %-4x\n"
 
@@ -819,7 +825,33 @@ _init_amd_sgpio_err:
 	return rc;
 }
 
-int amd_sgpio_em_enabled(const char *path)
+static void _get_amd_led_interface(void)
+{
+	char *name;
+
+	name = get_text("/sys/class/dmi/id", "product_name");
+	if (!name) {
+		/* Assume SGPIO interface */
+		amd_interface = AMD_SGPIO;
+		return;
+	}
+
+	if (!strncmp(name, "ETHANOL-X", 9))
+		amd_interface = AMD_IPMI;
+	else if (!strncmp(name, "DAYTONA-X", 9))
+		amd_interface = AMD_SGPIO;
+	else if (!strncmp(name, "GRANDSTAND", 10))
+		amd_interface = AMD_SGPIO;
+	else if (!strncmp(name, "SPEEDWAY", 8))
+		amd_interface = AMD_SGPIO;
+	else
+		/* default yo SGPIO interface */
+		amd_interface = AMD_SGPIO;
+
+	free(name);
+}
+
+static int _amd_sgpio_em_enabled(const char *path)
 {
 	char *p;
 	int rc, found;
@@ -883,12 +915,40 @@ int amd_sgpio_em_enabled(const char *path)
 	return rc ? 0 : 1;
 }
 
-int amd_sgpio_write(struct block_device *device, enum ibpi_pattern ibpi)
+static int _amd_ipmi_em_enabled(const char *path)
 {
-	/* write only if state has changed */
-	if (ibpi == device->ibpi_prev)
-		return 1;
+	/* Not Supported, yet. */
+	return 0;
+}
 
+int amd_em_enabled(const char *path)
+{
+	int rc;
+
+	_get_amd_led_interface();
+
+	switch (amd_interface) {
+	case AMD_SGPIO:
+		rc = _amd_sgpio_em_enabled(path);
+		break;
+
+	case AMD_IPMI:
+		rc = _amd_ipmi_em_enabled(path);
+		break;
+
+	case AMD_UNSET:
+	default:
+		log_info("Unknown AMD platform\n");
+		rc = 0;
+		break;
+	}
+
+	return rc;
+}
+
+static int _amd_sgpio_write(struct block_device *device,
+			    enum ibpi_pattern ibpi)
+{
 	if ((ibpi < IBPI_PATTERN_NORMAL) || (ibpi > IBPI_PATTERN_LOCATE_OFF))
 		__set_errno_and_return(ERANGE);
 
@@ -899,7 +959,25 @@ int amd_sgpio_write(struct block_device *device, enum ibpi_pattern ibpi)
 	return _set_ibpi(device, ibpi);
 }
 
-char *amd_sgpio_get_path(const char *cntrl_path)
+static int _amd_ipmi_write(struct block_device *device,
+			   enum ibpi_pattern ibpi)
+{
+	__set_errno_and_return(ENOTSUP);
+}
+
+int amd_write(struct block_device *device, enum ibpi_pattern ibpi)
+{
+	/* write only if state has changed */
+	if (ibpi == device->ibpi_prev)
+		return 1;
+
+	if (amd_interface == AMD_SGPIO)
+		return _amd_sgpio_write(device, ibpi);
+	else
+		return _amd_ipmi_write(device, ibpi);
+}
+
+char *amd_get_path(const char *cntrl_path)
 {
 	int len, found;
 	char *em_buffer_path;
