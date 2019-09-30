@@ -849,3 +849,15 @@ int _amd_sgpio_write(struct block_device *device,
 
 	return _set_ibpi(device, ibpi);
 }
+
+void _amd_set_sgpio_3led(void)
+{
+	tx_leds_blink_gen_a[IBPI_PATTERN_LOCATE].error = 0;
+	tx_leds_blink_gen_a[IBPI_PATTERN_LOCATE].locate = 0b010;
+	tx_leds_blink_gen_a[IBPI_PATTERN_LOCATE].activity = 0;
+
+	tx_leds_blink_gen_b[IBPI_PATTERN_LOCATE].error = 0;
+	tx_leds_blink_gen_b[IBPI_PATTERN_LOCATE].locate = 0b010;
+	tx_leds_blink_gen_b[IBPI_PATTERN_LOCATE].activity = 0;
+}
+

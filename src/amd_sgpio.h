@@ -21,3 +21,5 @@
 
 int _amd_sgpio_em_enabled(const char *path);
 int _amd_sgpio_write(struct block_device *device, enum ibpi_pattern ibpi);
+
+void _amd_set_sgpio_3led(void);
