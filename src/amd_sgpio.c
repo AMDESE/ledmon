@@ -248,8 +248,15 @@ static int _open_and_map_cache(void)
 	flock(cache_fd, LOCK_EX);
 
 	fstat(cache_fd, &sbuf);
-	if (sbuf.st_size == 0)
-		ftruncate(cache_fd, CACHE_SZ);
+	if (sbuf.st_size == 0) {
+		int rc;
+
+		rc = ftruncate(cache_fd, CACHE_SZ);
+		if (rc) {
+			_put_cache();
+			return -1;
+		}
+	}
 
 	sgpio_cache = mmap(NULL, CACHE_SZ, PROT_READ | PROT_WRITE,
 			   MAP_SHARED, cache_fd, 0);

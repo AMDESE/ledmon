@@ -257,11 +257,14 @@ int ledmon_write_shared_conf(void)
 	char *blacklist = NULL;
 	void *shared_mem_ptr;
 	int fd = shm_open(LEDMON_SHARE_MEM_FILE, O_RDWR | O_CREAT, 0644);
+	int rc;
 
 	if (fd == -1)
 		return STATUS_FILE_OPEN_ERROR;
 
-	ftruncate(fd, sizeof(buf));
+	rc = ftruncate(fd, sizeof(buf));
+	if (rc)
+		return STATUS_FILE_OPEN_ERROR;
 
 	shared_mem_ptr = mmap(NULL, sizeof(buf), PROT_WRITE, MAP_SHARED, fd, 0);
 	if (shared_mem_ptr == MAP_FAILED) {

@@ -893,6 +893,7 @@ int main(int argc, char *argv[])
 	}
 	if (!foreground) {
 		pid_t pid = fork();
+		int rc;
 
 		if (pid < 0) {
 			log_debug("main(): fork() failed (errno=%d).", errno);
@@ -914,8 +915,10 @@ int main(int argc, char *argv[])
 
 		int t = open("/dev/null", O_RDWR);
 
-		dup(t);
-		dup(t);
+		rc = dup(t);
+		rc = dup(t);
+		if (rc)
+			log_error("failed to dup descriptor\n");
 	}
 
 	umask(027);
