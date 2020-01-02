@@ -119,6 +119,7 @@ static int possible_params[] = {
 	OPT_QUIET,
 	OPT_WARNING,
 	OPT_LOG_LEVEL,
+	OPT_AMD_SGPIO3,
 };
 
 static const int possible_params_size = sizeof(possible_params)
@@ -552,6 +553,9 @@ static status_t _cmdline_parse(int argc, char *argv[])
 					status = set_verbose_level(log_level);
 				else
 					status = STATUS_CMDLINE_ERROR;
+				break;
+			case OPT_AMD_SGPIO3:
+				amd_sgpio3 = 1;
 				break;
 			default:
 				status = set_verbose_level(

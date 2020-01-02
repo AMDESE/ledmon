@@ -47,6 +47,9 @@
 enum amd_led_interfaces amd_interface = AMD_INTF_UNSET;
 enum amd_platforms amd_platform = AMD_PLATFORM_UNSET;
 
+/* AMD Specific options */
+int amd_sgpio3 = 0;
+
 int _find_file_path(const char *start_path, const char *filename,
 		    char *path, size_t path_len)
 {
@@ -113,6 +116,15 @@ static void _get_amd_led_interface(void)
 	} else if (!strncmp(name, "Speedway", 8)) {
 		amd_interface = AMD_INTF_SGPIO;
 		amd_platform = AMD_PLATFORM_SPEEDWAY;
+	}
+
+	/* The --amd_sgpio3 option forces the use of the SGPIO
+	 * interface and updates the LED tables to use 3-LED
+	 * IBPI patterns.
+	 */
+	if (amd_sgpio3) {
+		amd_interface = AMD_INTF_SGPIO;
+		_amd_set_sgpio_3led();
 	}
 
 	free(name);

@@ -280,6 +280,17 @@ static struct cache_entry *_get_cache(struct amd_drive *drive)
 	return &sgpio_cache[index];
 }
 
+void _amd_set_sgpio_3led(void)
+{
+	tx_leds_blink_gen_a[IBPI_PATTERN_LOCATE].error = 0;
+	tx_leds_blink_gen_a[IBPI_PATTERN_LOCATE].locate = 0b01;
+	tx_leds_blink_gen_a[IBPI_PATTERN_LOCATE].activity = 0;
+
+	tx_leds_blink_gen_b[IBPI_PATTERN_LOCATE].error = 0;
+	tx_leds_blink_gen_b[IBPI_PATTERN_LOCATE].locate = 0b01;
+	tx_leds_blink_gen_b[IBPI_PATTERN_LOCATE].activity = 0;
+}
+
 static int _send_sgpio_register(const char *em_buffer_path, void *reg,
 				int reg_len)
 {

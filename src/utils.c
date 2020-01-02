@@ -519,6 +519,7 @@ struct option longopt_all[] = {
 	[OPT_LIST_CTRL]    = {"list-controllers", no_argument, NULL, 'L'},
 	[OPT_LISTED_ONLY]  = {"listed-only", no_argument, NULL, 'x'},
 	[OPT_FOREGROUND]   = {"foreground", no_argument, NULL, '\0'},
+	[OPT_AMD_SGPIO3]   = {"amd_sgpio3", no_argument, NULL, '\0'},
 	[OPT_NULL_ELEMENT] = {NULL, no_argument, NULL, '\0'}
 };
 

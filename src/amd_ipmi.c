@@ -389,6 +389,9 @@ int _amd_ipmi_write(struct block_device *device, enum ibpi_pattern ibpi)
 	log_info("\n");
 	log_info("Setting %s...", ibpi2str(ibpi));
 
+	log_debug("Cntrl Path: %s\n", device->cntrl_path);
+	log_debug("Sysfs Path: %s\n", device->sysfs_path);
+
 	rc = _get_amd_ipmi_drive(device->cntrl_path, &drive);
 	if (rc)
 		return rc;

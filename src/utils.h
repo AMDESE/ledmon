@@ -353,6 +353,7 @@ enum opt {
 	OPT_LIST_CTRL,
 	OPT_LISTED_ONLY,
 	OPT_FOREGROUND,
+	OPT_AMD_SGPIO3,
 	OPT_NULL_ELEMENT
 };
 
@@ -363,5 +364,8 @@ int get_option_id(const char *optarg);
 status_t set_verbose_level(int log_level);
 
 const char *ibpi2str(enum ibpi_pattern ibpi);
+
+/* AMD Specific option */
+extern int amd_sgpio3;
 
 #endif				/* _UTILS_H_INCLUDED_ */
